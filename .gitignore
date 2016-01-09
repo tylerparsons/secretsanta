@@ -1,0 +1,13 @@
+# Data files
+*.csv*
+*.xls*
+
+# Editor/lock files
+*.sw[po]
+.~lock.*
+*~
+
+# Compiled python
+*.pyc
+__pycache__
+
