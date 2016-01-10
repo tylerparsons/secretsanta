@@ -1,28 +1,88 @@
-import random
 import secretsanta as ss
+import random
+import collections
+
 
 class SecretSanta:
+
 
     def __init__(self, families, members, oldConnections):
         self.families = families
         self.members  = members
         self.oldConnections = oldConnections
 
-    def randomConnection(self, year):
 
-        # Select random members from different families
-        source = random.choice(self.families.keys())
-        target = random.choice(self.families.keys())
-        while self.families[target] == self.families[source]:
-            target = random.choice(self.families.keys())
+    def randomConnection(self, sourceQueue, targetQueue, year):
 
-        return ss.Connection(source, target, year)
+        s = len(sourceQueue) - 1
+        t = len(targetQueue) - 1
+        
+        changeSources = True
 
+        while s >= 0 and t >= 0:
 
-    def familyValid(self, connection):
-        return True
+            sourceFam = self.families[sourceQueue[s]]
+            targetFam = self.families[targetQueue[t]]
+        
+            if sourceFam != targetFam:
+
+                source = sourceQueue[s]
+                target = targetQueue[t]
+
+                if s < len(sourceQueue) - 1:
+                    sourceQueue[s] = sourceQueue.pop()
+                else:
+                    sourceQueue.pop()
+
+                if t < len(targetQueue) - 1:
+                    targetQueue[t] = targetQueue.pop()
+                else:
+                    targetQueue.pop()
+
+                return ss.Connection(source, target, year)
+
+            if changeSources:
+                s -= 1
+            else:
+                t -= 1
+
+            changeSources = not changeSources
+                
+        # Cannot generate valid connection
+        return None                
 
 
     def genConnections(self, year):
-        return {}
+        
+        connections = []
+
+        members = list(self.families.keys())
+        random.shuffle(members)
+        sourceQueue = collections.deque(members)
+        random.shuffle(members)
+        targetQueue = collections.deque(members)
+
+        matchedSources = set()
+        matchedTargets = set()
+
+        while len(sourceQueue) > 0 and len(targetQueue) > 0:
+
+            # Attempt to generate random connection
+            # using unmatched nodes from queues
+            conn = self.randomConnection(sourceQueue,
+                                         targetQueue,
+                                         year)
+            if conn is not None:
+                matchedSources.add(conn.source)
+                matchedTargets.add(conn.target)
+
+            connections.append(conn)
+
+            if len(connections) == len(members):
+                break
+                        
+
+        return connections
+
+    
 

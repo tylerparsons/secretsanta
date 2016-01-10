@@ -60,7 +60,7 @@ def main():
     oldConnections = loadConnections('connections.csv')
     print(oldConnections)
 
-    santa = ss.SecretSanta(oldConnections, families, members)
+    santa = ss.SecretSanta(families, members, oldConnections)
 
     newConnections = santa.genConnections(2016)
     print(newConnections)
