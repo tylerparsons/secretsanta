@@ -1,5 +1,6 @@
 import random
 import secretsanta as ss
+import sys
 
 
 # CSV column mappings 
@@ -51,19 +52,41 @@ def loadConnections(csvPath):
     return connections
 
 
+def saveConnections(csvPath, connections):
+    with open(csvPath, 'w') as file:
+        
+        file.write('source,target,year\n')
+
+        for conn in connections:
+            file.write(','.join([
+                conn.source,
+                conn.target,
+                str(conn.year)
+            ]) + '\n')
+
+
 def main():
 
-    families, members = loadFamilyMembers('families.csv')
+    if len(sys.argv) != 4:
+        print('usage: ss.py <familyFile> <oldConnFile> <newConnFile>')
+        exit(1)
+
+    familyFile = sys.argv[1]
+    oldConnFile = sys.argv[2]
+    newConnFile = sys.argv[3]
+
+    families, members = loadFamilyMembers(familyFile)
     print(families)
     print(members)
 
-    oldConnections = loadConnections('connections.csv')
+    oldConnections = loadConnections(oldConnFile)
     print(oldConnections)
 
     santa = ss.SecretSanta(families, members, oldConnections)
 
     newConnections = santa.genConnections(2016)
     print(newConnections)
+    saveConnections(newConnFile, newConnections)
 
 
 if __name__ == '__main__':

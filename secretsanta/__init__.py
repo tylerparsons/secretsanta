@@ -1,3 +1,3 @@
-from secretsanta.connection      import Connection
-from secretsanta.connectiongraph import ConnectionGraph
-from secretsanta.secretsanta     import SecretSanta
+from connection      import Connection
+from connectiongraph import ConnectionGraph
+from secretsanta     import SecretSanta

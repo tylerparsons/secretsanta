@@ -1,4 +1,4 @@
-import secretsanta as ss
+from connection import Connection
 import random
 import collections
 
@@ -11,6 +11,16 @@ class SecretSanta:
         self.members  = members
         self.oldConnections = oldConnections
 
+    
+    def connectionValid(self, conn):
+
+        sourceFam = self.families[conn.source]
+        targetFam = self.families[conn.target]
+
+        return (sourceFam != targetFam and not
+            self.oldConnections.has(conn.source,
+                                    conn.target))
+
 
     def randomConnection(self, sourceQueue, targetQueue, year):
 
@@ -21,13 +31,12 @@ class SecretSanta:
 
         while s >= 0 and t >= 0:
 
-            sourceFam = self.families[sourceQueue[s]]
-            targetFam = self.families[targetQueue[t]]
-        
-            if sourceFam != targetFam:
+            source = sourceQueue[s]
+            target = targetQueue[t]
 
-                source = sourceQueue[s]
-                target = targetQueue[t]
+            conn = Connection(source, target, year)
+        
+            if self.connectionValid(conn):
 
                 if s < len(sourceQueue) - 1:
                     sourceQueue[s] = sourceQueue.pop()
@@ -39,7 +48,7 @@ class SecretSanta:
                 else:
                     targetQueue.pop()
 
-                return ss.Connection(source, target, year)
+                return conn
 
             if changeSources:
                 s -= 1
