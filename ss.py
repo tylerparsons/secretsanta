@@ -76,16 +76,11 @@ def main():
     newConnFile = sys.argv[3]
 
     families, members = loadFamilyMembers(familyFile)
-    print(families)
-    print(members)
-
     oldConnections = loadConnections(oldConnFile)
-    print(oldConnections)
 
     santa = ss.SecretSanta(families, members, oldConnections)
 
     newConnections = santa.genConnections(2016)
-    print(newConnections)
     saveConnections(newConnFile, newConnections)
 
 
