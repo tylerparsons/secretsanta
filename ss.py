@@ -1,6 +1,7 @@
 import random
 import secretsanta as ss
 import sys
+import traceback
 
 
 # CSV column mappings 
@@ -36,10 +37,11 @@ def loadFamilyMembers(csvPath):
     return families, members
 
 
-def loadConnections(csvPath):
+def loadConnections(csvPath, families, members):
     with open(csvPath, 'r') as file:
 
-        connections = ss.ConnectionGraph()
+        connections = ss.ConnectionGraph(families,
+                                         members)
 
         for line in file:
             data = line.strip().split(',')
@@ -55,13 +57,14 @@ def loadConnections(csvPath):
 def saveConnections(csvPath, connections):
     with open(csvPath, 'w') as file:
         
-        file.write('source,target,year\n')
+        file.write('giver,receiver,year,weight\n')
 
         for conn in connections:
             file.write(','.join([
                 conn.source,
                 conn.target,
-                str(conn.year)
+                str(conn.year),
+                str(conn.weight)
             ]) + '\n')
 
 
@@ -76,11 +79,23 @@ def main():
     newConnFile = sys.argv[3]
 
     families, members = loadFamilyMembers(familyFile)
-    oldConnections = loadConnections(oldConnFile)
+    oldConnections = loadConnections(oldConnFile,
+                                     families,
+                                     members)
 
     santa = ss.SecretSanta(families, members, oldConnections)
 
-    newConnections = santa.genConnections(2016)
+    try:
+        newConnections = santa.genConnections(2016)
+    except Exception as e:
+        print('Failed to generate new connections:')
+        traceback.print_exc()
+        exit(2)
+
+    totalWeight = sum(conn.weight for conn in newConnections)
+    print('Generated new connections with total weight %d'
+         % totalWeight)
+
     saveConnections(newConnFile, newConnections)
 
 

@@ -34,7 +34,11 @@ class SecretSanta:
             source = sourceQueue[s]
             target = targetQueue[t]
 
-            conn = Connection(source, target, year)
+            conn = self.oldConnections.makeWeightedConn(
+                source,
+                target,
+                year
+            )
         
             if self.connectionValid(conn):
 

@@ -1,15 +1,17 @@
 
 class Connection:
 
-    def __init__(self, source, target, year):
+    def __init__(self, source, target, year, weight = 0):
         self.source = source
         self.target = target
         self.year   = year
+        self.weight = weight
 
     def __str__(self):
-        return "{}|{}|{}".format(self.source,
-                                 self.target,
-                                 self.year)
+        return "{}|{}|{}|{}".format(self.source,
+                                    self.target,
+                                    self.year,
+                                    self.weight)
 
     def __repr__(self):
         return self.__str__()
