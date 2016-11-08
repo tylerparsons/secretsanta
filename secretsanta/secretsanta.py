@@ -17,9 +17,13 @@ class SecretSanta:
         sourceFam = self.families[conn.source]
         targetFam = self.families[conn.target]
 
-        return (sourceFam != targetFam and not
-            self.oldConnections.has(conn.source,
-                                    conn.target))
+        return (sourceFam != targetFam
+            and not self.oldConnections.has(
+                        conn.source,
+                        conn.target) 
+            and not self.oldConnections.has(
+                        conn.target,
+                        conn.source))
 
 
     def randomConnection(self, sourceQueue, targetQueue, year):
