@@ -1,8 +1,7 @@
+import sys
 import random
 import secretsanta as ss
-import sys
-import traceback
-
+import datetime as dt
 
 # CSV column mappings 
 FAM_MEMBER_COL  = 0
@@ -70,13 +69,16 @@ def saveConnections(csvPath, connections):
 
 def main():
 
-    if len(sys.argv) != 4:
-        print('usage: ss.py <familyFile> <oldConnFile> <newConnFile>')
+    argc = len(sys.argv)
+    if argc != 4 and argc != 5:
+        print('usage: ss.py <familyFile> <oldConnFile> ' +
+                           '<newConnFile> [<connYear>]')
         exit(1)
 
     familyFile = sys.argv[1]
     oldConnFile = sys.argv[2]
     newConnFile = sys.argv[3]
+    connYear = int(sys.argv[4]) if argc == 5 else dt.datetime.now().year
 
     families, members = loadFamilyMembers(familyFile)
     oldConnections = loadConnections(oldConnFile,
@@ -85,16 +87,11 @@ def main():
 
     santa = ss.SecretSanta(families, members, oldConnections)
 
-    try:
-        newConnections = santa.genConnections(2016)
-    except Exception as e:
-        print('Failed to generate new connections:')
-        traceback.print_exc()
-        exit(2)
+    newConnections = santa.genConnections(connYear)
 
     totalWeight = sum(conn.weight for conn in newConnections)
-    print('Generated new connections with total weight %d'
-         % totalWeight)
+    print('Generated new connections for %d with total weight %d'
+         % (connYear, totalWeight))
 
     saveConnections(newConnFile, newConnections)
 

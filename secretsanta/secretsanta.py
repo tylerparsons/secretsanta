@@ -92,6 +92,9 @@ class SecretSanta:
             if conn is not None:
                 matchedSources.add(conn.source)
                 matchedTargets.add(conn.target)
+            else:
+                # Could not generate connections, reattempt
+                return self.genConnections(year)
 
             connections.append(conn)
 
