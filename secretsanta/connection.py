@@ -21,3 +21,9 @@ class Connection:
                      self.target,
                      self.year))
 
+    def reverse(self):
+        return Connection(self.target,
+                          self.source,
+                          self.year,
+                          self.weight)
+

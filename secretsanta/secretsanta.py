@@ -11,8 +11,8 @@ class SecretSanta:
         self.members  = members
         self.oldConnections = oldConnections
 
-    
-    def connectionValid(self, conn):
+
+    def connectionValid(self, conn, connections):
 
         sourceFam = self.families[conn.source]
         targetFam = self.families[conn.target]
@@ -23,14 +23,19 @@ class SecretSanta:
                         conn.target) 
             and not self.oldConnections.has(
                         conn.target,
-                        conn.source))
+                        conn.source)
+            and not conn.reverse() in connections)
 
 
-    def randomConnection(self, sourceQueue, targetQueue, year):
+    def randomConnection(self,
+                         connections,
+                         sourceQueue,
+                         targetQueue,
+                         year):
 
         s = len(sourceQueue) - 1
         t = len(targetQueue) - 1
-        
+
         changeSources = True
 
         while s >= 0 and t >= 0:
@@ -43,8 +48,8 @@ class SecretSanta:
                 target,
                 year
             )
-        
-            if self.connectionValid(conn):
+
+            if self.connectionValid(conn, connections):
 
                 if s < len(sourceQueue) - 1:
                     sourceQueue[s] = sourceQueue.pop()
@@ -64,14 +69,14 @@ class SecretSanta:
                 t -= 1
 
             changeSources = not changeSources
-                
+
         # Cannot generate valid connection
-        return None                
+        return None
 
 
     def genConnections(self, year):
-        
-        connections = []
+
+        connections = set()
 
         members = list(self.families.keys())
         random.shuffle(members)
@@ -86,7 +91,8 @@ class SecretSanta:
 
             # Attempt to generate random connection
             # using unmatched nodes from queues
-            conn = self.randomConnection(sourceQueue,
+            conn = self.randomConnection(connections,
+                                         sourceQueue,
                                          targetQueue,
                                          year)
             if conn is not None:
@@ -96,7 +102,7 @@ class SecretSanta:
                 # Could not generate connections, reattempt
                 return self.genConnections(year)
 
-            connections.append(conn)
+            connections.add(conn)
 
             if len(connections) == len(members):
                 break
@@ -104,5 +110,4 @@ class SecretSanta:
 
         return connections
 
-    
 
